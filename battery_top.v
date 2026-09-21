@@ -1,33 +1,5 @@
 `timescale 1ns / 1ps
 
-// ================================================================
-// Project 1: Lithium-Ion Battery Modeling & SOC Estimation
-// Module   : battery_top
-// Description:
-//   Top-level integration of:
-//     1. Dynamic Load Profile
-//     2. Battery Voltage Model
-//     3. Coulomb Counting SOC
-//     4. OCV-based SOC
-//     5. SOC Comparison
-//
-// Tool:
-//   Xilinx Vivado
-//
-// Current convention:
-//   + current = DISCHARGE
-//   - current = CHARGE
-//
-// SOC representation:
-//   10000 = 100.00%
-//       0 =   0.00%
-//
-// Voltage:
-//   mV
-//
-// Current:
-//   mA
-// ================================================================
 
 module battery_top #(
     parameter integer CLK_FREQ_HZ = 50_000_000,
@@ -37,10 +9,6 @@ module battery_top #(
 )(
     input wire clk,
     input wire rst,
-
-    // ------------------------------------------------------------
-    // Main outputs
-    // ------------------------------------------------------------
 
     output wire signed [15:0] current_ma,
 
@@ -57,11 +25,6 @@ module battery_top #(
     output wire [13:0] soc_abs_error
 );
 
-    // ============================================================
-    // MODULE 1
-    // Dynamic Load Profile
-    // ============================================================
-
     load_profile #(
         .CLK_FREQ_HZ(CLK_FREQ_HZ)
     )
@@ -73,12 +36,7 @@ module battery_top #(
     );
 
 
-    // ============================================================
-    // MODULE 2
-    // Battery Voltage Model
-    //
-    // Vbattery = OCV - I*R
-    // ============================================================
+   
 
     voltage_model #(
         .R_INTERNAL_MOHM(R_INTERNAL_MOHM)
@@ -94,11 +52,7 @@ module battery_top #(
     );
 
 
-    // ============================================================
-    // MODULE 3
-    // Coulomb Counting SOC
-    // ============================================================
-
+    
     soc_coulomb #(
         .CLK_FREQ_HZ(CLK_FREQ_HZ),
         .CAPACITY_MAH(CAPACITY_MAH),
@@ -114,10 +68,7 @@ module battery_top #(
     );
 
 
-    // ============================================================
-    // MODULE 4
-    // OCV-based SOC
-    // ============================================================
+    
 
     ocv_soc u_ocv_soc (
         .ocv_mv(ocv_mv),
@@ -126,10 +77,7 @@ module battery_top #(
     );
 
 
-    // ============================================================
-    // MODULE 5
-    // SOC Comparison
-    // ============================================================
+  
 
     soc_compare u_soc_compare (
         .soc_coulomb(soc_coulomb),
