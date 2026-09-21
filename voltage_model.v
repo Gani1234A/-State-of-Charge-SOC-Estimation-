@@ -1,38 +1,5 @@
 `timescale 1ns / 1ps
 
-// ================================================================
-// Project 1: Lithium-Ion Battery Modeling & SOC Estimation
-// Module   : voltage_model
-// Model    : Rint Battery Voltage Model
-// Tool     : Xilinx Vivado
-//
-// Equation:
-//
-//      Vbattery = OCV(SOC) - I × Rinternal
-//
-// Current convention:
-//
-//      + current = DISCHARGE
-//      - current = CHARGE
-//
-// Units:
-//
-//      Voltage  = mV
-//      Current  = mA
-//      Resistance = milliohm
-//
-// Example:
-//
-//      OCV       = 3900 mV
-//      Current   = 1000 mA
-//      R         = 50 milliohm
-//
-//      Voltage drop = 1000 × 50 / 1000
-//                   = 50 mV
-//
-//      Vbattery = 3900 - 50
-//               = 3850 mV
-// ================================================================
 
 module voltage_model #(
     parameter integer R_INTERNAL_MOHM = 50
@@ -50,17 +17,12 @@ module voltage_model #(
     output reg [15:0] battery_voltage_mv
 );
 
-    // ------------------------------------------------------------
-    // Internal calculation signals
-    // ------------------------------------------------------------
-
     reg signed [31:0] ir_product;
 
     reg signed [31:0] voltage_drop_mv;
 
     reg signed [31:0] calculated_voltage_mv;
 
-    // ------------------------------------------------------------
     // OCV-SOC lookup table
     //
     // SOC:
@@ -73,8 +35,6 @@ module voltage_model #(
     // 4200 mV = 4.20 V
     // 3900 mV = 3.90 V
     // 3000 mV = 3.00 V
-    // ------------------------------------------------------------
-
     always @(*) begin
 
         if (soc >= 14'd10000)
@@ -112,15 +72,13 @@ module voltage_model #(
 
     end
 
-    // ------------------------------------------------------------
+   
     // Terminal voltage calculation
-    //
     // V = OCV - I*R
-    // ------------------------------------------------------------
-
+   
     always @(*) begin
 
-        // Current(mA) × Resistance(milliohm)
+        // Current(mA) Ã— Resistance(milliohm)
         ir_product = current_ma * R_INTERNAL_MOHM;
 
         // Convert to mV
