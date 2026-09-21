@@ -1,25 +1,5 @@
 `timescale 1ns / 1ps
 
-// ================================================================
-// Project 1: Lithium-Ion Battery Modeling & SOC Estimation
-// Module   : load_profile
-// Purpose  : Generate dynamic battery charge/discharge current
-// Tool     : Xilinx Vivado
-//
-// Current convention:
-//   + current = DISCHARGE
-//   - current = CHARGE
-//
-// Example profile:
-//   0-10 s   : 0 A
-//   10-20 s  : 1 A discharge
-//   20-30 s  : 2 A discharge
-//   30-40 s  : 0 A
-//   40-50 s  : 1 A charge
-//   50-60 s  : 2 A discharge
-//   60-70 s  : 0 A
-//   70-80 s  : 0.5 A charge
-// ================================================================
 
 module load_profile #(
     parameter integer CLK_FREQ_HZ = 50_000_000
@@ -27,28 +7,15 @@ module load_profile #(
     input  wire               clk,
     input  wire               rst,
 
-    // Dynamic load current
-    // Unit: mA
-    // Positive = discharge
-    // Negative = charge
+    
     output reg signed [15:0] current_ma
 );
 
-    // ------------------------------------------------------------
-    // 1-second clock counter
-    // ------------------------------------------------------------
-
+ 
     reg [31:0] clk_counter;
-
-    // ------------------------------------------------------------
-    // Profile time in seconds
-    // ------------------------------------------------------------
 
     reg [7:0] profile_time;
 
-    // ------------------------------------------------------------
-    // Generate one-second timing
-    // ------------------------------------------------------------
 
     always @(posedge clk) begin
 
@@ -84,18 +51,13 @@ module load_profile #(
 
     end
 
-    // ------------------------------------------------------------
-    // Dynamic current profile
-    // ------------------------------------------------------------
+  
 
     always @(*) begin
 
         case (profile_time)
 
-            // ----------------------------------------------------
-            // 0 - 9 seconds
-            // Rest
-            // ----------------------------------------------------
+         
             8'd0  : current_ma = 16'sd0;
             8'd1  : current_ma = 16'sd0;
             8'd2  : current_ma = 16'sd0;
@@ -107,10 +69,7 @@ module load_profile #(
             8'd8  : current_ma = 16'sd0;
             8'd9  : current_ma = 16'sd0;
 
-            // ----------------------------------------------------
-            // 10 - 19 seconds
-            // 1 A DISCHARGE
-            // ----------------------------------------------------
+            
             8'd10 : current_ma = 16'sd1000;
             8'd11 : current_ma = 16'sd1000;
             8'd12 : current_ma = 16'sd1000;
@@ -122,10 +81,7 @@ module load_profile #(
             8'd18 : current_ma = 16'sd1000;
             8'd19 : current_ma = 16'sd1000;
 
-            // ----------------------------------------------------
-            // 20 - 29 seconds
-            // 2 A DISCHARGE
-            // ----------------------------------------------------
+          
             8'd20 : current_ma = 16'sd2000;
             8'd21 : current_ma = 16'sd2000;
             8'd22 : current_ma = 16'sd2000;
@@ -137,10 +93,7 @@ module load_profile #(
             8'd28 : current_ma = 16'sd2000;
             8'd29 : current_ma = 16'sd2000;
 
-            // ----------------------------------------------------
-            // 30 - 39 seconds
-            // Rest
-            // ----------------------------------------------------
+           
             8'd30 : current_ma = 16'sd0;
             8'd31 : current_ma = 16'sd0;
             8'd32 : current_ma = 16'sd0;
@@ -152,11 +105,6 @@ module load_profile #(
             8'd38 : current_ma = 16'sd0;
             8'd39 : current_ma = 16'sd0;
 
-            // ----------------------------------------------------
-            // 40 - 49 seconds
-            // 1 A CHARGE
-            // Negative current = charging
-            // ----------------------------------------------------
             8'd40 : current_ma = -16'sd1000;
             8'd41 : current_ma = -16'sd1000;
             8'd42 : current_ma = -16'sd1000;
@@ -168,10 +116,7 @@ module load_profile #(
             8'd48 : current_ma = -16'sd1000;
             8'd49 : current_ma = -16'sd1000;
 
-            // ----------------------------------------------------
-            // 50 - 59 seconds
-            // 2 A DISCHARGE
-            // ----------------------------------------------------
+           
             8'd50 : current_ma = 16'sd2000;
             8'd51 : current_ma = 16'sd2000;
             8'd52 : current_ma = 16'sd2000;
@@ -183,10 +128,6 @@ module load_profile #(
             8'd58 : current_ma = 16'sd2000;
             8'd59 : current_ma = 16'sd2000;
 
-            // ----------------------------------------------------
-            // 60 - 69 seconds
-            // Rest
-            // ----------------------------------------------------
             8'd60 : current_ma = 16'sd0;
             8'd61 : current_ma = 16'sd0;
             8'd62 : current_ma = 16'sd0;
@@ -198,10 +139,6 @@ module load_profile #(
             8'd68 : current_ma = 16'sd0;
             8'd69 : current_ma = 16'sd0;
 
-            // ----------------------------------------------------
-            // 70 - 79 seconds
-            // 0.5 A CHARGE
-            // ----------------------------------------------------
             8'd70 : current_ma = -16'sd500;
             8'd71 : current_ma = -16'sd500;
             8'd72 : current_ma = -16'sd500;
